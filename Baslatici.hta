@@ -16,175 +16,115 @@
 >
 
 <style>
-    body {
-        background-color: #020202;
-        color: #00ffcc;
-        font-family: 'Segoe UI', 'Consolas', sans-serif;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-    .main-wrapper {
-        border: 2px solid #00ffcc;
-        height: 100vh;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        background: radial-gradient(circle at center, #001a1a 0%, #020202 100%);
-    }
-    .header {
-        padding: 20px;
-        text-align: center;
-        border-bottom: 1px solid #00ffcc;
-        background: rgba(0, 255, 204, 0.05);
-    }
-    h1 { 
-        margin: 0; 
-        font-size: 32px; 
-        letter-spacing: 5px; 
-        text-shadow: 0 0 15px #00ffcc;
-        font-weight: 900;
-    }
+    body { background-color: #020202; color: #00ffcc; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow: hidden; }
+    .main-wrapper { border: 2px solid #00ffcc; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; background: radial-gradient(circle at center, #001a1a 0%, #020202 100%); }
     
-    #lock-overlay {
-        display: none;
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.98);
-        z-index: 9999;
-        text-align: center;
-        padding-top: 100px;
-    }
+    /* Header */
+    .header { padding: 20px; text-align: center; border-bottom: 1px solid #00ffcc; background: rgba(0, 255, 204, 0.05); position: relative; }
+    h1 { margin: 0; font-size: 28px; letter-spacing: 5px; text-shadow: 0 0 15px #00ffcc; font-weight: 900; }
     
-    .update-card {
-        background: #000;
-        border: 2px solid #ff0000;
-        display: inline-block;
-        padding: 40px;
-        box-shadow: 0 0 30px #ff0000;
-    }
-
-    #readme-box {
-        background: rgba(0, 10, 10, 0.8);
-        border: 1px solid #004444;
-        padding: 15px;
-        height: 100px;
-        margin: 15px;
-        overflow-y: auto;
-        font-size: 13px;
-        color: #00cccc;
-        line-height: 1.5;
-    }
-
-    .tools-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        overflow-y: auto;
-        padding: 0 15px 15px 15px;
-        flex-grow: 1;
-    }
-
-    .btn-tool {
-        background: rgba(0, 40, 40, 0.3);
-        color: #00ffcc;
-        border: 1px solid #00ffcc;
-        padding: 15px;
-        cursor: pointer;
-        font-weight: bold;
-        text-transform: uppercase;
-        transition: 0.2s;
-        outline: none;
-    }
-
-    .btn-tool:hover { 
-        background: #00ffcc; 
-        color: #000; 
-        box-shadow: 0 0 20px #00ffcc;
-        transform: scale(1.02);
-    }
-
-    .status-bar {
-        background: rgba(0, 255, 204, 0.1);
-        padding: 10px 20px;
-        font-size: 12px;
-        display: flex;
-        justify-content: space-between;
-        border-top: 1px solid #004444;
-    }
-
-    .update-btn-active {
-        background: linear-gradient(45deg, #ff0000, #990000);
-        color: white;
-        padding: 20px 40px;
-        border: none;
-        font-size: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 0 15px #ff0000;
-        text-decoration: none;
-    }
+    /* Kilit Ekrani */
+    #lock-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; text-align: center; padding-top: 100px; }
+    .update-card { background: #000; border: 2px solid #ff0000; display: inline-block; padding: 40px; box-shadow: 0 0 30px #ff0000; }
     
-    .update-btn-active:hover {
-        background: #ff0000;
-        box-shadow: 0 0 30px #ff0000;
-    }
-
-    .close-area {
-        padding: 10px 15px;
-    }
-    .btn-exit {
-        width: 100%;
-        background: transparent;
-        color: #ff4444;
-        border: 1px solid #ff4444;
-        padding: 8px;
-        cursor: pointer;
-    }
-    .btn-exit:hover { background: #ff4444; color: #000; }
+    /* Icerik Alanlari */
+    #readme-box { background: rgba(0, 10, 10, 0.8); border: 1px solid #004444; padding: 15px; height: 80px; margin: 15px; overflow-y: auto; font-size: 13px; color: #00cccc; border-left: 4px solid #00ffcc; }
+    .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; overflow-y: auto; padding: 0 15px; flex-grow: 1; }
+    
+    /* Butonlar */
+    .btn-tool { background: rgba(0, 40, 40, 0.3); color: #00ffcc; border: 1px solid #00ffcc; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
+    .btn-tool:hover { background: #00ffcc; color: #000; box-shadow: 0 0 20px #00ffcc; }
+    
+    .update-btn-active { background: #ff0000; color: white; padding: 20px 40px; border: none; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px #ff0000; margin-top: 20px; }
+    
+    /* Alt Bilgi */
+    .status-bar { background: rgba(0, 255, 204, 0.1); padding: 10px 20px; font-size: 11px; display: flex; justify-content: space-between; border-top: 1px solid #004444; }
+    .ver-badge { background: #00ffcc; color: #000; padding: 2px 8px; font-weight: bold; border-radius: 3px; }
 </style>
 
 <script language="vbs">
     Set objShell = CreateObject("WScript.Shell")
     Set fso = CreateObject("Scripting.FileSystemObject")
     
-    Dim localVer, githubRaw, githubRepo
-    localVer = "1.0" ' LOCAL SURUM
-    githubRaw = "https://raw.githubusercontent.com/wraitstudio-cmd/Wrait-Tools/main/version.txt"
-    githubRepo = "https://github.com/wraitstudio-cmd/Wrait-Tools"
+    ' --- AYARLAR ---
+    Dim localVer, repoOwner, repoName, lastCommitID
+    localVer = "1.0" 
+    repoOwner = "wraitstudio-cmd"
+    repoName = "Wrait-Tools"
+    ' Burasi cok onemli: En son commit'i takip etmek icin GitHub API kullaniyoruz
+    apiURL = "https://api.github.com/repos/" & repoOwner & "/" & repoName & "/commits/main"
+    rawVerURL = "https://raw.githubusercontent.com/" & repoOwner & "/" & repoName & "/main/version.txt"
 
     Sub Window_OnLoad
         window.resizeTo 900, 700
-        ' Pencereyi ortala
         posX = (screen.width - 900) / 2
         posY = (screen.height - 700) / 2
         window.moveTo posX, posY
         
-        document.getElementById("ui-local-ver").innerText = "SURUM: V" & localVer
-        AutoCheck
+        ' Sag kosede V1.0 formatinda goster
+        document.getElementById("ui-local-ver").innerHTML = "<span class='ver-badge'>V" & localVer & "</span>"
+        UpdateCheckFlow
     End Sub
 
-    Sub AutoCheck
+    Sub UpdateCheckFlow
         On Error Resume Next
         Set xml = CreateObject("MSXML2.XMLHTTP")
-        ' Cache onleyici timestamp
-        xml.Open "GET", githubRaw & "?t=" & Timer, False
+        
+        ' 1. ADIM: GitHub'daki version.txt dosyasini oku (Anlik guncelleme icin timestamp eklendi)
+        xml.Open "GET", rawVerURL & "?nocache=" & Timer, False
         xml.Send
         
         If xml.Status = 200 Then
             onlineVer = Trim(xml.responseText)
             document.getElementById("ui-online-ver").innerText = "GUNCEL: V" & onlineVer
             
+            ' Eger versiyon farkliysa kilitle
             If onlineVer <> localVer Then
-                document.getElementById("lock-overlay").style.display = "block"
-                document.getElementById("ver-text").innerText = "YENI VERSIYON TESPIT EDILDI: V" & onlineVer
-            Else
-                LoadPanel
+                ShowLock "VERSIYON DEGISTI: V" & onlineVer
+                Exit Sub
             End If
+            
+            ' 2. ADIM: Versiyon ayniysa bile Commit kontrolu yap (Yeni push varsa algilar)
+            CheckCommit xml
         Else
+            ' Internet yoksa veya hata varsa direkt paneli ac
             document.getElementById("ui-online-ver").innerText = "OFFLINE MOD"
             LoadPanel
         End If
+    End Sub
+
+    Sub CheckCommit(xmlObj)
+        ' GitHub API'den son commit SHA kodunu aliyoruz
+        xmlObj.Open "GET", apiURL, False
+        xmlObj.SetRequestHeader "User-Agent", "WraitOS-Updater"
+        xmlObj.Send
+        
+        If xmlObj.Status = 200 Then
+            ' JSON icinden SHA kodunu cok basitce ayikliyoruz
+            resp = xmlObj.responseText
+            startPos = InStr(resp, """sha"":""") + 7
+            currentSHA = Mid(resp, startPos, 7) ' Ilk 7 karakter (Kisa SHA)
+            
+            ' Eger bir "last_commit.txt" dosyamiz varsa ve icindeki kod farkliysa guncelleme var demektir
+            If fso.FileExists("last_commit.txt") Then
+                oldSHA = fso.OpenTextFile("last_commit.txt", 1).ReadAll
+                If Trim(oldSHA) <> Trim(currentSHA) Then
+                    ShowLock "YENI COMMIT TESPIT EDILDI (" & currentSHA & ")"
+                    Exit Sub
+                End If
+            Else
+                ' Ilk calistirmada SHA dosyasini olustur
+                Set f = fso.CreateTextFile("last_commit.txt", True)
+                f.Write currentSHA
+                f.Close
+            End If
+        End If
+        LoadPanel
+    End Sub
+
+    Sub ShowLock(msg)
+        document.getElementById("lock-overlay").style.display = "block"
+        document.getElementById("ver-text").innerText = msg
     End Sub
 
     Sub LoadPanel
@@ -200,8 +140,7 @@
             For Each file In fso.GetFolder("Tools").Files
                 ext = LCase(fso.GetExtensionName(file.Name))
                 If ext = "bat" Or ext = "exe" Or ext = "cmd" Then
-                    fName = fso.GetBaseName(file.Name)
-                    strHTML = strHTML & "<button class='btn-tool' onclick=""RunTool('" & Replace(file.Path, "\", "\\") & "')"">" & fName & "</button>"
+                    strHTML = strHTML & "<button class='btn-tool' onclick=""RunTool('" & Replace(file.Path, "\", "\\") & "')"">" & fso.GetBaseName(file.Name) & "</button>"
                 End If
             Next
         End If
@@ -213,13 +152,13 @@
     End Sub
 
     Sub StartUpdate
-        ' Otomatik Updater Scripti
+        ' Guncelleme scripti
         Set batch = fso.CreateTextFile("WraitUpdater.bat", True)
         batch.WriteLine "@echo off"
         batch.WriteLine "title WRAIT OS AUTO UPDATER"
         batch.WriteLine "color 0c"
         batch.WriteLine "echo [!] DOSYALAR INDIRILIYOR..."
-        batch.WriteLine "powershell -Command ""Invoke-WebRequest -Uri 'https://github.com/wraitstudio-cmd/Wrait-Tools/archive/refs/heads/main.zip' -OutFile 'update.zip'"""
+        batch.WriteLine "powershell -Command ""[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://github.com/wraitstudio-cmd/Wrait-Tools/archive/refs/heads/main.zip' -OutFile 'update.zip'"""
         batch.WriteLine "echo [!] AYIKLANIYOR..."
         batch.WriteLine "powershell -Command ""Expand-Archive -Path 'update.zip' -DestinationPath 'temp_upd' -Force"""
         batch.WriteLine "echo [!] DOSYALAR DEGISTIRILIYOR..."
@@ -238,34 +177,27 @@
 </head>
 
 <body>
-    <!-- KILIT EKRANI -->
     <div id="lock-overlay">
         <div class="update-card">
-            <h1 style="color:#ff0000; text-shadow: 0 0 20px #ff0000; margin-bottom:10px;">SISTEM KILITLI</h1>
-            <p id="ver-text" style="font-size:18px; color:white;"></p>
-            <p style="color:#888; margin-bottom:30px;">Kullanmaya devam etmek icin guncelleme zorunludur.</p>
+            <h1 style="color:#ff0000; text-shadow: 0 0 20px #ff0000;">SISTEM KILITLI</h1>
+            <p id="ver-text" style="font-size:18px; color:white; margin:20px 0;"></p>
             <button class="update-btn-active" onclick="StartUpdate">OTOMATIK GUNCELLEMEYI BASLAT</button>
         </div>
     </div>
 
-    <!-- ANA PANEL -->
     <div class="main-wrapper">
         <div class="header">
             <h1>WRAIT OS MASTER PANEL</h1>
         </div>
         
-        <div id="readme-box">Sistem yukleniyor...</div>
+        <div id="readme-box">System checking for updates...</div>
         
         <div id="tools_list" class="tools-grid"></div>
 
-        <div class="close-area">
-            <button class="btn-exit" onclick="window.close">PANELI KAPAT</button>
-        </div>
-
         <div class="status-bar">
-            <span id="ui-online-ver">BAGLANTI KONTROL EDILIYOR...</span>
+            <span id="ui-online-ver">ONLINE CHECK...</span>
             <span style="color:#fff; font-weight:bold;">DEVELOPER: WRAITGAME</span>
-            <span id="ui-local-ver" style="color:#00ffcc;">SURUM: V--</span>
+            <span id="ui-local-ver"></span>
         </div>
     </div>
 </body>
