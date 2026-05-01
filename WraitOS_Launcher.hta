@@ -11,92 +11,163 @@
     sysmenu="yes"
     windowstate="normal"
     scroll="no"
+    selection="no"
 >
 
 <style>
     body {
-        background-color: #0b0b0b;
+        background-color: #050505;
         color: #00ffff;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Consolas', 'Segoe UI', sans-serif;
         margin: 0;
-        padding: 20px;
+        padding: 15px;
         overflow: hidden;
     }
-    .container { border: 2px solid #00ffff; height: 95%; padding: 15px; display: flex; flex-direction: column; }
-    h1 { text-align: center; font-size: 24px; border-bottom: 1px solid #00ffff; padding-bottom: 10px; }
+    .container { 
+        border: 1px solid #00ffff; 
+        height: 94%; 
+        padding: 20px; 
+        display: flex; 
+        flex-direction: column;
+        box-shadow: inset 0 0 15px #00ffff33;
+    }
+    .header {
+        text-align: center;
+        margin-bottom: 15px;
+        border-bottom: 2px double #00ffff;
+        padding-bottom: 10px;
+    }
+    h1 { margin: 0; font-size: 28px; letter-spacing: 3px; text-shadow: 0 0 10px #00ffff; }
     
+    #lock-overlay {
+        display: none;
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.95);
+        z-index: 9999;
+        text-align: center;
+        padding-top: 150px;
+    }
+
     #readme-box {
-        background: #001a1a;
-        border: 1px solid #008080;
-        padding: 10px;
-        height: 150px;
+        background: #000c0c;
+        border: 1px inset #008080;
+        padding: 12px;
+        height: 110px;
         overflow-y: auto;
-        margin-bottom: 20px;
-        font-size: 13px;
-        white-space: pre-wrap;
+        margin-bottom: 15px;
+        font-size: 12px;
+        color: #00cccc;
+        scrollbar-face-color: #004444;
     }
 
     .tools-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        gap: 8px;
         overflow-y: auto;
         flex-grow: 1;
+        padding-right: 5px;
     }
 
     button {
-        background: #004444;
+        background: #001a1a;
         color: #00ffff;
-        border: 1px solid #00ffff;
-        padding: 10px;
+        border: 1px solid #008080;
+        padding: 12px;
         cursor: pointer;
         font-weight: bold;
-        transition: 0.3s;
+        font-size: 11px;
+        text-transform: uppercase;
+        transition: all 0.2s;
     }
 
-    button:hover { background: #00ffff; color: #000; }
-    .close-btn { background: #440000; color: #ff0000; border-color: #ff0000; margin-top: 10px; }
+    button:hover { 
+        background: #00ffff; 
+        color: #000; 
+        box-shadow: 0 0 10px #00ffff;
+    }
+
+    .status-bar {
+        font-size: 11px;
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        color: #008080;
+    }
+
+    .update-lock-btn {
+        background: #ff0000;
+        color: white;
+        padding: 20px;
+        border: none;
+        font-size: 18px;
+    }
 </style>
 
 <script language="vbs">
     Set objShell = CreateObject("WScript.Shell")
     Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    Dim currentVersion, githubRawURL, githubRepoURL
+    currentVersion = "1.0"
+    githubRawURL = "https://raw.githubusercontent.com/wraitstudio-cmd/Wrait-Tools/main/version.txt"
+    githubRepoURL = "https://github.com/wraitstudio-cmd/Wrait-Tools"
 
     Sub Window_OnLoad
-        window.resizeTo 800, 600
-        ' ReadMe.txt Oku
-        If fso.FileExists("ReadMe.txt") Then
-            Set objFile = fso.OpenTextFile("ReadMe.txt", 1)
-            strText = objFile.ReadAll
-            objFile.Close
-            document.getElementById("readme-box").innerText = strText
-        Else
-            document.getElementById("readme-box").innerText = "ReadMe.txt bulunamadı."
-        End If
+        window.resizeTo 850, 650
+        document.getElementById("local-ver").innerText = "Local v" & currentVersion
+        CheckUpdate
+    End Sub
+
+    Sub CheckUpdate
+        On Error Resume Next
+        Set xmlHttp = CreateObject("MSXML2.XMLHTTP")
+        xmlHttp.Open "GET", githubRawURL, False
+        xmlHttp.Send
         
-        ' Araçları Listele
+        If xmlHttp.Status = 200 Then
+            onlineVer = Trim(xmlHttp.responseText)
+            document.getElementById("online-ver").innerText = "Online v" & onlineVer
+            If onlineVer <> currentVersion Then
+                document.getElementById("lock-overlay").style.display = "block"
+            Else
+                InitApp
+            End If
+        Else
+            document.getElementById("online-ver").innerText = "Sunucuya Baglanilamadi"
+            InitApp
+        End If
+    End Sub
+
+    Sub InitApp
+        If fso.FileExists("ReadMe.txt") Then
+            strText = fso.OpenTextFile("ReadMe.txt", 1).ReadAll
+            document.getElementById("readme-box").innerText = strText
+        End If
         LoadTools
     End Sub
 
     Sub LoadTools
         strHTML = ""
-        path = "Tools"
-        If fso.FolderExists(path) Then
-            Set objFolder = fso.GetFolder(path)
-            For Each objFile In objFolder.Files
+        If fso.FolderExists("Tools") Then
+            For Each objFile In fso.GetFolder("Tools").Files
                 ext = LCase(fso.GetExtensionName(objFile.Name))
                 If ext = "bat" Or ext = "exe" Or ext = "cmd" Then
-                    fileName = fso.GetBaseName(objFile.Name)
-                    strHTML = strHTML & "<button onclick=""RunTool('" & objFile.Path & "')"">" & fileName & "</button>"
+                    fName = fso.GetBaseName(objFile.Name)
+                    strHTML = strHTML & "<button onclick=""RunTool('" & Replace(objFile.Path, "\", "\\") & "')"">" & fName & "</button>"
                 End If
             Next
         End If
         tools_list.innerHTML = strHTML
     End Sub
 
-    Sub RunTool(filePath)
-        ' Çift tırnak sorunu için yolu düzenle
-        objShell.Run Chr(34) & filePath & Chr(34), 1, False
+    Sub RunTool(path)
+        objShell.Run Chr(34) & path & Chr(34), 1, False
+    End Sub
+
+    Sub GoToGithub
+        objShell.Run githubRepoURL
     End Sub
 
     Sub CloseApp
@@ -106,16 +177,29 @@
 </head>
 
 <body>
+    <div id="lock-overlay">
+        <h1 style="color:red; text-shadow: 0 0 15px red;">SISTEM KILITLENDI</h1>
+        <p style="font-size:18px;">Yeni bir guncelleme tespit edildi.<br>Devam etmek icin guncellemeniz gerekmektedir.</p>
+        <br>
+        <button class="update-lock-btn" onclick="GoToGithub">GITHUB'DAN GUNCELLEMEYI INDIR</button>
+    </div>
+
     <div class="container">
-        <h1>WRAIT OS - MASTER PANEL</h1>
+        <div class="header">
+            <h1>WRAIT OS CONTROL CENTER</h1>
+        </div>
         
-        <div id="readme-box">Yükleniyor...</div>
+        <div id="readme-box">Bilgiler yukleniyor...</div>
         
-        <div id="tools_list" class="tools-grid">
-            <!-- Butonlar buraya dinamik gelecek -->
+        <div id="tools_list" class="tools-grid"></div>
+
+        <div class="status-bar">
+            <span id="local-ver">v1.0</span>
+            <span id="online-ver">Kontrol ediliyor...</span>
+            <span>Developer: WraitGame</span>
         </div>
 
-        <button class="close-btn" onclick="CloseApp">PANELİ KAPAT</button>
+        <button style="background:#220000; color:#ff4444; border-color:#ff4444; margin-top:10px;" onclick="CloseApp">SISTEMI KAPAT</button>
     </div>
 </body>
 </html>
