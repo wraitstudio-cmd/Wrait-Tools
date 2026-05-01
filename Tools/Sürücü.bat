@@ -1,98 +1,69 @@
 @echo off
-chcp 65001 >nul
-title Wrait OS - Sürücü Yönetim Merkezi
-mode con: cols=85 lines=25
+title WRAIT OS - DRIVER ENGINE
 color 0b
 
-:: Yönetici kontrolü
+:: Admin Check
 net session >nul 2>&1
-if %errorLevel% neq 0 (
-    echo.
-    echo [!] HATA: Sürücü işlemleri için yönetici yetkisi gerekir!
+if %errorlevel% neq 0 (
+    echo [!] ADMIN PRIVILEGES REQUIRED
     pause
     exit
 )
 
-:: Klasör Yapısını Oluştur (Yoksa oluşturur)
-set "DATAPATH=%LocalAppData%\WraitOs_Data"
-set "DRIVERPATH=%DATAPATH%\Drivers"
-
-if not exist "%DATAPATH%" (
-    mkdir "%DATAPATH%"
-    echo [i] Veri klasörü oluşturuldu: %DATAPATH%
-)
-
-if not exist "%DRIVERPATH%" (
-    mkdir "%DRIVERPATH%"
-)
+:: Folder Setup
+set "WDRV=C:\WraitOS_Drivers"
+if not exist "%WDRV%" mkdir "%WDRV%"
 
 :menu
 cls
+echo ==========================================
+echo       WRAIT OS // DRIVER ENGINE
+echo ==========================================
 echo.
-echo  ===========================================================================
-echo                    WRAIT OS - SÜRÜCÜ YEDEKLEME VE GERİ YÜKLER
-echo  ===========================================================================
+echo  [1] BACKUP DRIVERS
+echo  [2] RESTORE DRIVERS
+echo  [3] OPEN FOLDER
+echo  [4] DELETE BACKUPS
+echo  [X] EXIT
 echo.
-echo    Yol: %DRIVERPATH%
-echo.
-echo    [1] Sürücüleri Yedekle (LocalAppdata içine)
-echo        - Mevcut tüm üçüncü taraf sürücüleri klasöre aktarır.
-echo.
-echo    [2] Sürücüleri Geri Yükle (Yedekten yükle)
-echo        - Klasördeki tüm .inf dosyalarını sisteme tekrar kurar.
-echo.
-echo    [3] Yedek Klasörünü Aç (Windows Gezgini)
-echo    [4] Yedekleri Temizle (Klasörü boşaltır)
-echo.
-echo    [X] ANA MENÜYE DÖN
-echo  ===========================================================================
-echo.
+echo ==========================================
+set /p choice="INPUT > "
 
-set /p sec="Seçiminizi yapın: "
+if "%choice%"=="1" goto backup
+if "%choice%"=="2" goto restore
+if "%choice%"=="3" goto openf
+if "%choice%"=="4" goto delete
+if /i "%choice%"=="X" exit
+goto menu
 
-if "%sec%"=="1" goto :yedekle
-if "%sec%"=="2" goto :geriyukle
-if "%sec%"=="3" goto :klasor_ac
-if "%sec%"=="4" goto :temizle
-if /i "%sec%"=="X" exit
-goto :menu
-
-:yedekle
+:backup
 cls
-echo.
-echo [!] Sürücüler dışa aktarılıyor... Bu işlem donanıma göre vakit alabilir.
-echo [!] Lütfen bekleyin...
-echo.
-dism /online /export-driver /destination:"%DRIVERPATH%"
-echo.
-echo [!] İşlem başarıyla tamamlandı.
-echo [!] Sürücüler şuraya kaydedildi: %DRIVERPATH%
+echo [+] Exporting drivers to %WDRV%...
+dism /online /export-driver /destination:"%WDRV%"
+echo [+] Done.
 pause
-goto :menu
+goto menu
 
-:geriyukle
+:restore
 cls
-echo.
-echo [!] Sürücüler geri yükleniyor...
-echo [!] Bu işlem sisteminize sürücüleri otomatik olarak tanıtacaktır.
-echo.
-pnputil /add-driver "%DRIVERPATH%\*.inf" /subdirs /install
-echo.
-echo [!] Geri yükleme işlemi bitti.
+echo [!] Importing drivers from %WDRV%...
+pnputil /add-driver "%WDRV%\*.inf" /subdirs /install
+echo [+] Done.
 pause
-goto :menu
+goto menu
 
-:klasor_ac
-start "" "%DRIVERPATH%"
-goto :menu
+:openf
+start explorer.exe "%WDRV%"
+goto menu
 
-:temizle
-echo.
-echo [!] DİKKAT: Tüm yedeklenmiş sürücüler silinecek!
-set /p onay="Emin misiniz? (E/H): "
-if /i "%onay%"=="E" (
-    del /q /s "%DRIVERPATH%\*.*" >nul
-    echo [!] Temizlendi.
+:delete
+cls
+echo [!] Are you sure? (Y/N)
+set /p confirm="> "
+if /i "%confirm%"=="Y" (
+    rd /s /q "%WDRV%"
+    mkdir "%WDRV%"
+    echo [+] Drivers Deleted.
 )
 pause
-goto :menu
+goto menu
