@@ -1,10 +1,10 @@
 <html>
 <head>
-<title>Wrait OS - Kontrol Merkezi</title>
+<title>WRAIT OS - NEXT GEN CONTROL PANEL</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <hta:application 
     id="WraitOS"
-    border="thin"
+    border="none"
     caption="yes"
     showintaskbar="yes"
     singleinstance="yes"
@@ -12,138 +12,184 @@
     windowstate="normal"
     scroll="no"
     selection="no"
+    innerborder="no"
 >
 
 <style>
     body {
-        background-color: #050505;
-        color: #00ffff;
-        font-family: 'Consolas', 'Segoe UI', sans-serif;
+        background-color: #020202;
+        color: #00ffcc;
+        font-family: 'Segoe UI', 'Consolas', sans-serif;
         margin: 0;
-        padding: 15px;
+        padding: 0;
         overflow: hidden;
     }
-    .container { 
-        border: 1px solid #00ffff; 
-        height: 94%; 
-        padding: 20px; 
-        display: flex; 
+    .main-wrapper {
+        border: 2px solid #00ffcc;
+        height: 100vh;
+        box-sizing: border-box;
+        display: flex;
         flex-direction: column;
-        box-shadow: inset 0 0 15px #00ffff33;
+        background: radial-gradient(circle at center, #001a1a 0%, #020202 100%);
     }
     .header {
+        padding: 20px;
         text-align: center;
-        margin-bottom: 15px;
-        border-bottom: 2px double #00ffff;
-        padding-bottom: 10px;
+        border-bottom: 1px solid #00ffcc;
+        background: rgba(0, 255, 204, 0.05);
     }
-    h1 { margin: 0; font-size: 28px; letter-spacing: 3px; text-shadow: 0 0 10px #00ffff; }
+    h1 { 
+        margin: 0; 
+        font-size: 32px; 
+        letter-spacing: 5px; 
+        text-shadow: 0 0 15px #00ffcc;
+        font-weight: 900;
+    }
     
     #lock-overlay {
         display: none;
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.95);
+        background: rgba(0,0,0,0.98);
         z-index: 9999;
         text-align: center;
-        padding-top: 150px;
+        padding-top: 100px;
+    }
+    
+    .update-card {
+        background: #000;
+        border: 2px solid #ff0000;
+        display: inline-block;
+        padding: 40px;
+        box-shadow: 0 0 30px #ff0000;
     }
 
     #readme-box {
-        background: #000c0c;
-        border: 1px inset #008080;
-        padding: 12px;
-        height: 110px;
+        background: rgba(0, 10, 10, 0.8);
+        border: 1px solid #004444;
+        padding: 15px;
+        height: 100px;
+        margin: 15px;
         overflow-y: auto;
-        margin-bottom: 15px;
-        font-size: 12px;
+        font-size: 13px;
         color: #00cccc;
-        scrollbar-face-color: #004444;
+        line-height: 1.5;
     }
 
     .tools-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        gap: 12px;
         overflow-y: auto;
+        padding: 0 15px 15px 15px;
         flex-grow: 1;
-        padding-right: 5px;
     }
 
-    button {
-        background: #001a1a;
-        color: #00ffff;
-        border: 1px solid #008080;
-        padding: 12px;
+    .btn-tool {
+        background: rgba(0, 40, 40, 0.3);
+        color: #00ffcc;
+        border: 1px solid #00ffcc;
+        padding: 15px;
         cursor: pointer;
         font-weight: bold;
-        font-size: 11px;
         text-transform: uppercase;
-        transition: all 0.2s;
+        transition: 0.2s;
+        outline: none;
     }
 
-    button:hover { 
-        background: #00ffff; 
+    .btn-tool:hover { 
+        background: #00ffcc; 
         color: #000; 
-        box-shadow: 0 0 10px #00ffff;
+        box-shadow: 0 0 20px #00ffcc;
+        transform: scale(1.02);
     }
 
     .status-bar {
-        font-size: 11px;
-        margin-top: 10px;
+        background: rgba(0, 255, 204, 0.1);
+        padding: 10px 20px;
+        font-size: 12px;
         display: flex;
         justify-content: space-between;
-        color: #008080;
+        border-top: 1px solid #004444;
     }
 
-    .update-lock-btn {
-        background: #ff0000;
+    .update-btn-active {
+        background: linear-gradient(45deg, #ff0000, #990000);
         color: white;
-        padding: 20px;
+        padding: 20px 40px;
         border: none;
-        font-size: 18px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 0 15px #ff0000;
+        text-decoration: none;
     }
+    
+    .update-btn-active:hover {
+        background: #ff0000;
+        box-shadow: 0 0 30px #ff0000;
+    }
+
+    .close-area {
+        padding: 10px 15px;
+    }
+    .btn-exit {
+        width: 100%;
+        background: transparent;
+        color: #ff4444;
+        border: 1px solid #ff4444;
+        padding: 8px;
+        cursor: pointer;
+    }
+    .btn-exit:hover { background: #ff4444; color: #000; }
 </style>
 
 <script language="vbs">
     Set objShell = CreateObject("WScript.Shell")
     Set fso = CreateObject("Scripting.FileSystemObject")
     
-    Dim currentVersion, githubRawURL, githubRepoURL
-    currentVersion = "1.0"
-    githubRawURL = "https://raw.githubusercontent.com/wraitstudio-cmd/Wrait-Tools/main/version.txt"
-    githubRepoURL = "https://github.com/wraitstudio-cmd/Wrait-Tools"
+    Dim localVer, githubRaw, githubRepo
+    localVer = "1.0" ' LOCAL SURUM
+    githubRaw = "https://raw.githubusercontent.com/wraitstudio-cmd/Wrait-Tools/main/version.txt"
+    githubRepo = "https://github.com/wraitstudio-cmd/Wrait-Tools"
 
     Sub Window_OnLoad
-        window.resizeTo 850, 650
-        document.getElementById("local-ver").innerText = "Local v" & currentVersion
-        CheckUpdate
+        window.resizeTo 900, 700
+        ' Pencereyi ortala
+        posX = (screen.width - 900) / 2
+        posY = (screen.height - 700) / 2
+        window.moveTo posX, posY
+        
+        document.getElementById("ui-local-ver").innerText = "SURUM: V" & localVer
+        AutoCheck
     End Sub
 
-    Sub CheckUpdate
+    Sub AutoCheck
         On Error Resume Next
-        Set xmlHttp = CreateObject("MSXML2.XMLHTTP")
-        xmlHttp.Open "GET", githubRawURL, False
-        xmlHttp.Send
+        Set xml = CreateObject("MSXML2.XMLHTTP")
+        ' Cache onleyici timestamp
+        xml.Open "GET", githubRaw & "?t=" & Timer, False
+        xml.Send
         
-        If xmlHttp.Status = 200 Then
-            onlineVer = Trim(xmlHttp.responseText)
-            document.getElementById("online-ver").innerText = "Online v" & onlineVer
-            If onlineVer <> currentVersion Then
+        If xml.Status = 200 Then
+            onlineVer = Trim(xml.responseText)
+            document.getElementById("ui-online-ver").innerText = "GUNCEL: V" & onlineVer
+            
+            If onlineVer <> localVer Then
                 document.getElementById("lock-overlay").style.display = "block"
+                document.getElementById("ver-text").innerText = "YENI VERSIYON TESPIT EDILDI: V" & onlineVer
             Else
-                InitApp
+                LoadPanel
             End If
         Else
-            document.getElementById("online-ver").innerText = "Sunucuya Baglanilamadi"
-            InitApp
+            document.getElementById("ui-online-ver").innerText = "OFFLINE MOD"
+            LoadPanel
         End If
     End Sub
 
-    Sub InitApp
+    Sub LoadPanel
         If fso.FileExists("ReadMe.txt") Then
-            strText = fso.OpenTextFile("ReadMe.txt", 1).ReadAll
-            document.getElementById("readme-box").innerText = strText
+            document.getElementById("readme-box").innerText = fso.OpenTextFile("ReadMe.txt", 1).ReadAll
         End If
         LoadTools
     End Sub
@@ -151,55 +197,76 @@
     Sub LoadTools
         strHTML = ""
         If fso.FolderExists("Tools") Then
-            For Each objFile In fso.GetFolder("Tools").Files
-                ext = LCase(fso.GetExtensionName(objFile.Name))
+            For Each file In fso.GetFolder("Tools").Files
+                ext = LCase(fso.GetExtensionName(file.Name))
                 If ext = "bat" Or ext = "exe" Or ext = "cmd" Then
-                    fName = fso.GetBaseName(objFile.Name)
-                    strHTML = strHTML & "<button onclick=""RunTool('" & Replace(objFile.Path, "\", "\\") & "')"">" & fName & "</button>"
+                    fName = fso.GetBaseName(file.Name)
+                    strHTML = strHTML & "<button class='btn-tool' onclick=""RunTool('" & Replace(file.Path, "\", "\\") & "')"">" & fName & "</button>"
                 End If
             Next
         End If
         tools_list.innerHTML = strHTML
     End Sub
 
-    Sub RunTool(path)
-        objShell.Run Chr(34) & path & Chr(34), 1, False
+    Sub RunTool(p)
+        objShell.Run Chr(34) & p & Chr(34), 1, False
     End Sub
 
-    Sub GoToGithub
-        objShell.Run githubRepoURL
-    End Sub
-
-    Sub CloseApp
+    Sub StartUpdate
+        ' Otomatik Updater Scripti
+        Set batch = fso.CreateTextFile("WraitUpdater.bat", True)
+        batch.WriteLine "@echo off"
+        batch.WriteLine "title WRAIT OS AUTO UPDATER"
+        batch.WriteLine "color 0c"
+        batch.WriteLine "echo [!] DOSYALAR INDIRILIYOR..."
+        batch.WriteLine "powershell -Command ""Invoke-WebRequest -Uri 'https://github.com/wraitstudio-cmd/Wrait-Tools/archive/refs/heads/main.zip' -OutFile 'update.zip'"""
+        batch.WriteLine "echo [!] AYIKLANIYOR..."
+        batch.WriteLine "powershell -Command ""Expand-Archive -Path 'update.zip' -DestinationPath 'temp_upd' -Force"""
+        batch.WriteLine "echo [!] DOSYALAR DEGISTIRILIYOR..."
+        batch.WriteLine "xcopy /s /y ""temp_upd\Wrait-Tools-main\*"" ""."" "
+        batch.WriteLine "rd /s /q temp_upd"
+        batch.WriteLine "del /f /q update.zip"
+        batch.WriteLine "echo [OK] GUNCELLEME TAMAMLANDI!"
+        batch.WriteLine "start Baslatici.hta"
+        batch.WriteLine "del ""%~f0"""
+        batch.Close
+        
+        objShell.Run "WraitUpdater.bat", 1, False
         window.close
     End Sub
 </script>
 </head>
 
 <body>
+    <!-- KILIT EKRANI -->
     <div id="lock-overlay">
-        <h1 style="color:red; text-shadow: 0 0 15px red;">SISTEM KILITLENDI</h1>
-        <p style="font-size:18px;">Yeni bir guncelleme tespit edildi.<br>Devam etmek icin guncellemeniz gerekmektedir.</p>
-        <br>
-        <button class="update-lock-btn" onclick="GoToGithub">GITHUB'DAN GUNCELLEMEYI INDIR</button>
+        <div class="update-card">
+            <h1 style="color:#ff0000; text-shadow: 0 0 20px #ff0000; margin-bottom:10px;">SISTEM KILITLI</h1>
+            <p id="ver-text" style="font-size:18px; color:white;"></p>
+            <p style="color:#888; margin-bottom:30px;">Kullanmaya devam etmek icin guncelleme zorunludur.</p>
+            <button class="update-btn-active" onclick="StartUpdate">OTOMATIK GUNCELLEMEYI BASLAT</button>
+        </div>
     </div>
 
-    <div class="container">
+    <!-- ANA PANEL -->
+    <div class="main-wrapper">
         <div class="header">
-            <h1>WRAIT OS CONTROL CENTER</h1>
+            <h1>WRAIT OS MASTER PANEL</h1>
         </div>
         
-        <div id="readme-box">Bilgiler yukleniyor...</div>
+        <div id="readme-box">Sistem yukleniyor...</div>
         
         <div id="tools_list" class="tools-grid"></div>
 
-        <div class="status-bar">
-            <span id="local-ver">v1.0</span>
-            <span id="online-ver">Kontrol ediliyor...</span>
-            <span>Developer: WraitGame</span>
+        <div class="close-area">
+            <button class="btn-exit" onclick="window.close">PANELI KAPAT</button>
         </div>
 
-        <button style="background:#220000; color:#ff4444; border-color:#ff4444; margin-top:10px;" onclick="CloseApp">SISTEMI KAPAT</button>
+        <div class="status-bar">
+            <span id="ui-online-ver">BAGLANTI KONTROL EDILIYOR...</span>
+            <span style="color:#fff; font-weight:bold;">DEVELOPER: WRAITGAME</span>
+            <span id="ui-local-ver" style="color:#00ffcc;">SURUM: V--</span>
+        </div>
     </div>
 </body>
 </html>
