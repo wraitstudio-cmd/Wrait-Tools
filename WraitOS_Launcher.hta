@@ -1,0 +1,121 @@
+<html>
+<head>
+<title>Wrait OS - Kontrol Merkezi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<hta:application 
+    id="WraitOS"
+    border="thin"
+    caption="yes"
+    showintaskbar="yes"
+    singleinstance="yes"
+    sysmenu="yes"
+    windowstate="normal"
+    scroll="no"
+>
+
+<style>
+    body {
+        background-color: #0b0b0b;
+        color: #00ffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        overflow: hidden;
+    }
+    .container { border: 2px solid #00ffff; height: 95%; padding: 15px; display: flex; flex-direction: column; }
+    h1 { text-align: center; font-size: 24px; border-bottom: 1px solid #00ffff; padding-bottom: 10px; }
+    
+    #readme-box {
+        background: #001a1a;
+        border: 1px solid #008080;
+        padding: 10px;
+        height: 150px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        font-size: 13px;
+        white-space: pre-wrap;
+    }
+
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    button {
+        background: #004444;
+        color: #00ffff;
+        border: 1px solid #00ffff;
+        padding: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    button:hover { background: #00ffff; color: #000; }
+    .close-btn { background: #440000; color: #ff0000; border-color: #ff0000; margin-top: 10px; }
+</style>
+
+<script language="vbs">
+    Set objShell = CreateObject("WScript.Shell")
+    Set fso = CreateObject("Scripting.FileSystemObject")
+
+    Sub Window_OnLoad
+        window.resizeTo 800, 600
+        ' ReadMe.txt Oku
+        If fso.FileExists("ReadMe.txt") Then
+            Set objFile = fso.OpenTextFile("ReadMe.txt", 1)
+            strText = objFile.ReadAll
+            objFile.Close
+            document.getElementById("readme-box").innerText = strText
+        Else
+            document.getElementById("readme-box").innerText = "ReadMe.txt bulunamadı."
+        End If
+        
+        ' Araçları Listele
+        LoadTools
+    End Sub
+
+    Sub LoadTools
+        strHTML = ""
+        path = "Tools"
+        If fso.FolderExists(path) Then
+            Set objFolder = fso.GetFolder(path)
+            For Each objFile In objFolder.Files
+                ext = LCase(fso.GetExtensionName(objFile.Name))
+                If ext = "bat" Or ext = "exe" Or ext = "cmd" Then
+                    fileName = fso.GetBaseName(objFile.Name)
+                    strHTML = strHTML & "<button onclick=""RunTool('" & objFile.Path & "')"">" & fileName & "</button>"
+                End If
+            Next
+        End If
+        tools_list.innerHTML = strHTML
+    End Sub
+
+    Sub RunTool(filePath)
+        ' Çift tırnak sorunu için yolu düzenle
+        objShell.Run Chr(34) & filePath & Chr(34), 1, False
+    End Sub
+
+    Sub CloseApp
+        window.close
+    End Sub
+</script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>WRAIT OS - MASTER PANEL</h1>
+        
+        <div id="readme-box">Yükleniyor...</div>
+        
+        <div id="tools_list" class="tools-grid">
+            <!-- Butonlar buraya dinamik gelecek -->
+        </div>
+
+        <button class="close-btn" onclick="CloseApp">PANELİ KAPAT</button>
+    </div>
+</body>
+</html>
