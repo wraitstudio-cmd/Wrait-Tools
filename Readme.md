@@ -27,7 +27,7 @@
 ### 🛠️ Kurulum (Installation)
 
 1.  **Setup Dosyasını İndirin:**
-    *   [WraitOS_Setup.exe](https://github.com/wraitstudio-cmd/Wrait-Tools/blob/main/WraitOS_Setup.exe) (veya hazırladığın Setup dosyasının linki) adresine gidin ve dosyayı indirin.
+    *   [WraitOS_Setup.exe](https://github.com/wraitstudio-cmd/Wrait-Tools/raw/main/WraitOS_Setup.exe) (veya hazırladığın Setup dosyasının linki) adresine gidin ve dosyayı indirin.
 
 2.  **Kurulumu Başlatın:**
     *   İndirdiğiniz `.exe` dosyasına çift tıklayın.
